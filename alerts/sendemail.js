@@ -5,14 +5,14 @@ require('dotenv').config();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: "vista5628@gmail.com",
-    pass: "ioya plqa pzzk ahdz"
+    user: process.env.EMAIL || "vista5628@gmail.com",
+    pass: process.env.EMAIL_PASSWORD || ""
   }
 });
 
 async function sendAlertEmail(to, subject, text) {
   const mailOptions = {
-    from: `"Vista Crypto Alerts" <${process.env.EMAIL_USER}>`,
+    from: `"Vista Crypto Alerts" <${process.env.EMAIL || "vista5628@gmail.com"}>`,
     to,
     subject,
     text

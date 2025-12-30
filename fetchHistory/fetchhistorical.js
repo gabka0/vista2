@@ -13,7 +13,7 @@ async function fetchAndSaveHistorical(coinSymbol, coinId) {
       params: {
         fsym: coinSymbol,
         tsym: 'USD',
-        limit: 2000, 
+        limit: 5, 
         api_key: API_KEY,
       },
     });
@@ -44,10 +44,20 @@ async function fetchAndSaveHistorical(coinSymbol, coinId) {
 async function run() {
   const coins = await prisma.coin.findMany();
 
-  for (const coin of coins) {
+  console.log(`Fetching historical data for ${coins.length} coins...`);
+  
+  for (let i = 0; i < coins.length; i++) {
+    const coin = coins[i];
+    console.log(`[${i + 1}/${coins.length}] Processing ${coin.symbol}...`);
     await fetchAndSaveHistorical(coin.symbol, coin.coin_id);
+    
+    // Add a small delay between API calls to avoid rate limiting
+    if (i < coins.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    }
   }
 
+  console.log('✅ All historical data fetched!');
   await prisma.$disconnect();
 }
 
